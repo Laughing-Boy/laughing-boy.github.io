@@ -2,24 +2,24 @@
   <head>
     <meta content='Gaussian Mixture VAE&#58; Lessons about Variational Inference, Generative Modeling, and Deep Nets - Rui Shu' property='og:title' />
     <title>Gaussian Mixture VAE&#58; Lessons about Variational Inference, Generative Modeling, and Deep Nets - Rui Shu</title>
-    <link href='/images/fav.png' rel='shortcut icon'>
+    <link href='http://localhost:4000/images/fav.png' rel='shortcut icon'>
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css' />
-<link href='/stylesheets/style.css' rel='stylesheet' type='text/css' />
-<link href='/stylesheets/syntax.css' rel='stylesheet' type='text/css' />
-<link href='/stylesheets/responsive.css' rel='stylesheet' type='text/css' />
+<link href='http://localhost:4000/stylesheets/style.css' rel='stylesheet' type='text/css' />
+<link href='http://localhost:4000/stylesheets/syntax.css' rel='stylesheet' type='text/css' />
+<link href='http://localhost:4000/stylesheets/responsive.css' rel='stylesheet' type='text/css' />
 <!-- - -->
-<script src='/javascripts/jquery.js' type='text/javascript'></script>
-<script src='/javascripts/pd.js' type='text/javascript'></script>
-<script src='/javascripts/basics.js' type='text/javascript'></script>
+<script src='http://localhost:4000/javascripts/jquery.js' type='text/javascript'></script>
+<script src='http://localhost:4000/javascripts/pd.js' type='text/javascript'></script>
+<script src='http://localhost:4000/javascripts/basics.js' type='text/javascript'></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <!-- - -->
 <meta content='width=device-width, initial-scale=1.0, user-scalable=no' name='viewport'>
 <meta content='text/html; charset=utf-8' http-equiv='content-type' />
-<meta content="/og.png" property="og:image" />
+<meta content="http://localhost:4000/og.png" property="og:image" />
 <meta content="" property="fb:app_id" />
 
-  <meta content='/2016/12/25/gmvae/' property='og:url' />
-  <meta content="$$\newcommand{\E}{\mathbb{E}}\newcommand{\brac}[1]{\left[#1\right]}\newcommand{\paren}[1]{\left(#1\right)}$$Not too l..." property='og:description' />
+  <meta content='http://localhost:4000/2016/12/25/gmvae/' property='og:url' />
+  <meta content="Not too long ago, I came across this paper on unsupervised clustering with Gaussian Mixture VAEs. I was quite surpris..." property='og:description' />
   <meta content="article" property="og:type" />
 
 <!-- - -->
@@ -50,7 +50,7 @@
   </script>
   <body>
     <header>
-<a id="go-back-home" href=""><img src="/images/inner_rui2.png" alt="Inner Rui" width="80" height="80"></a>
+<a id="go-back-home" href="http://localhost:4000"><img src="http://localhost:4000/images/inner_rui2.png" alt="Inner Rui" width="80" height="80"></a>
 <p>Rui Shu</p>
 </header>
 
@@ -59,20 +59,14 @@
   
     <a target="_top"
        class="main" 
-       href="/about">
+       href="http://localhost:4000/about">
        About
      </a>
   
     <a target="_top"
        class="main" 
-       href="/">
+       href="http://localhost:4000/">
        Blog
-     </a>
-  
-    <a target="_top"
-       class="main" 
-       href="/cv">
-       CV
      </a>
   
     <a target="_blank"
@@ -93,11 +87,9 @@
             <div class='date'>25 Dec 2016</div>
             Gaussian Mixture VAE&#58; Lessons about Variational Inference, Generative Modeling, and Deep Nets
           </h1>
-          <script type="math/tex; mode=display">
-\newcommand{\E}{\mathbb{E}}
+          <script type="math/tex; mode=display">\newcommand{\E}{\mathbb{E}}
 \newcommand{\brac}[1]{\left[#1\right]}
-\newcommand{\paren}[1]{\left(#1\right)}
-</script>
+\newcommand{\paren}[1]{\left(#1\right)}</script>
 
 <p>Not too long ago, I came across this <a href="https://arxiv.org/abs/1611.02648">paper</a> on unsupervised clustering with Gaussian Mixture VAEs. I was quite surprised, especially since I had worked on a <em>very</em> similar (maybe the same?) concept <a href="https://github.com/RuiShu/vae-experiments/tree/master/modality">a few months back</a>. It’s an interesting read, so I do recommend it. But the basic gist of it is: instead of a typical VAE-based deep generative model with layers of Gaussian latent variables, the authors propose using a <em>mixture</em> of Gaussians for one of the layers. In doing so, we can now do unsupervised clustering with the new Gaussian Mixture VAE (GMVAE) model.</p>
 
@@ -110,15 +102,13 @@
 <p>One thing that bugged me was that they didn’t actually have a mixture of Gaussians per se. In their paper, they used the following generative model</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
-
 \begin{align}
 p(x, y, z_1, z_2) &= p(y)p(z_2)p(z_1 \mid y, z_2) p(x \mid z_1)\\
 y &\sim \text{Cat}(1/K) \\
 z_2 &\sim \mathcal{N}(0, I) \\
 z_1 &\sim \mathcal{N}(\mu_z(y, z_2), \sigma_z^2(y, z_2))\\
 x &\sim \mathcal{B}(\mu_x(z_1)),
-\end{align}
- %]]></script>
+\end{align} %]]></script>
 
 <p>I should note that my naming choices differ from theirs and is more in keeping with previously established naming convention. Anyway, the authors noted that $Z_1\vert Z_2$ is a Gaussian mixture, which inspired the name GMVAE. But once you marginalize out $Z_2$, the distribution in $Z_1$ is actually an arbitrary distribution thanks to the non-linearities in the $\mu_z(\cdot)$ function. So what they really have is a mixture of arbitrary distributions in the space of $Z_1$. I think the naming convention is a bit unfortunate, but I can also see why they chose it. But in any case, at least it’s still a mixture of distributions!</p>
 
@@ -126,67 +116,61 @@ x &\sim \mathcal{B}(\mu_x(z_1)),
 
 <h3 id="the-prior-is-anti-clustering">The Prior is Anti-Clustering?</h3>
 
-<p>In order to perform clustering well, the authors made an eyebrow-raising modification to the standard variational objective. In particular, they introduced a new $\eta$ term. Recall that for the generative model mentioned above, the variational lower bound of $p(x)$ is</p>
+<p>In order to perform clustering well, the authors made an eyebrow-raising modification to the standard variational objective. In particular, they introduced a new $\eta$ term. For the generative model mentioned above, the variational lower bound of $p(x)$ is</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
-
 \begin{align}
 \mathcal{L}
 &= \E_{q(y, z_{1:2} \mid x)} \brac{\ln p(y)p(z_2)(z_1 \mid y)p(x \mid z_1) - \ln q(y, z_{1:2} \mid x)}\\
 &= \E_{q(y \mid x)}[\ln p(y) - \ln q(y \mid x)] + \text{more terms}\\
 &= -KL(q(y \mid x) \| p(y)) + \text{more terms}.
-\end{align}
- %]]></script>
+\end{align} %]]></script>
 
-<p>With a bit of refactoring, you will find that the lower bound can be reexpressed to show the effect of the KL-divergence between $q(y \mid x)$ and $p(y)$. The argument goes: since $q(y \mid x)$ is forced to be close to the prior, the KL-term has an anti-clustering effect and thus needs to be down-weighted by some factor $\eta$ during training.</p>
+<p>With a bit of refactoring, you will find that the lower bound can be re-expressed to show the effect of the KL-divergence between $q(y \mid x)$ and $p(y)$. The argument goes: since $q(y \mid x)$ is forced to be close to the prior, the KL-term has an anti-clustering effect and thus needs to be down-weighted by some factor $\eta$ during training.</p>
 
 <p>The authors also introduced a new auxiliary objective: the Consistency Violation term. To greatly gloss over the specifics, this term minimizes the conditional entropy $\mathcal{H}(Y \mid X)$. The upshot is that $\eta$ and CV are both modifications to the original variational objective in order to counteract the nefarious anti-clustering prior.</p>
 
-<p>I can understand this line of logic, but I also think this is a slippery slope. Saying that the prior is anti-clustering is a bit of a <a href="https://en.wiktionary.org/wiki/Citations:deepity">deepity</a>. From a different perspective, the prior is doing exactly what it is supposed to be: be anti-informative. The prior encourages $X$ to not encode information into $Y$ because doing so incurs the KL penalty. But suppose that encoding into $Y$ <em>helps</em> improve reconstruction. If the reward of better reconstructions outweighs the cost of the incurred penalty, then the model will use $Y$.</p>
+<p>I can understand this line of logic, but I also think sends the wrong message about the purpose of the prior. Saying that the prior is anti-clustering is a bit of a <a href="https://en.wiktionary.org/wiki/Citations:deepity">deepity</a>. From a different perspective, the prior is doing exactly what it is supposed to be: be anti-informative. The prior encourages $X$ to not encode information into $Y$ because doing so incurs the KL penalty. But suppose that encoding into $Y$ <em>helps</em> improve reconstruction. If the reward of better reconstructions outweighs the cost of the incurred penalty, then the model will use $Y$.</p>
 
 <hr />
 
 <h3 id="revisiting-kingmas-m2-model">Revisiting Kingma’s M2 Model</h3>
 
-<p>The big question is then: does using the discrete $Y$ actually help improve the variational lower bound? In other words, does encoding into $Y$ help more than it hurts? Intuitively, the answer seems to be yes—for the right type of data. In MNIST, for example, there are very clearly 10 different classes. It seems natural that an optimal encoding will involve a categorical variable. </p>
+<p>The big question is then: does using the discrete $Y$ actually help improve the variational lower bound? In other words, does encoding into $Y$ help more than it hurts? Intuitively, the answer seems to be yes—for the right type of data. In MNIST, for example, there are very clearly 10 different classes. It seems natural that an optimal encoding will involve a categorical variable.</p>
 
-<p>It would be nice to know, without all the bells and whistles of weighting terms and Consistency Violation, how well a mixture VAE trained using the vanilla variational objective would perform as a clustering algorithm. Fortunately, the <a href="https://arxiv.org/abs/1611.02648">paper</a> does provide such an example in Figure 2d. However, they did not provide a quantitative measure of how well the model would perform on the MNIST unuspervised clustering task. More importantly, they are training their 2-stochastic-layer model with mean-field approximations. It is notoriously difficult to train DLGMs when you restrict the variational family to the set of independent Gaussians, and a lot of work had been done to find better ways of doing <a href="https://arxiv.org/abs/1602.02282">structured mean-field inference</a>.</p>
+<p>It would be nice to know, without all the bells and whistles of weighting terms and Consistency Violation, how well a mixture VAE trained using the vanilla variational objective would perform as a clustering algorithm. Fortunately, the <a href="https://arxiv.org/abs/1611.02648">paper</a> does provide such an example in Figure 2d. However, they did not provide a quantitative measure of how well the model would perform on the MNIST unuspervised clustering task. More importantly, they are training their 2-stochastic-layer model using mean-field approximation. It is notoriously difficult to train Deep Latent Gaussian Models (DLGMs) when you restrict the variational family to the set of independent Gaussians, and a lot of work had been done to find better ways of doing <a href="https://arxiv.org/abs/1602.02282">structured mean-field inference</a>.</p>
 
 <p>In order to not potentially conflate multiple contributing factors, let’s make our experiment as possible and revisit Kingma’s M2 model. In Kingma’s original <a href="https://arxiv.org/abs/1406.5298">semi-supervised learning paper</a>, Kingma proposed a simple generative model of the form</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
-
 \begin{align}
 p(x, y, z) &= p(y)p(z) p(x \mid y, z)\\
 y &\sim \text{Cat}(1/K) \\
 z &\sim \mathcal{N}(0, I) \\
 x &\sim \mathcal{B}(\mu_x(y, z)).
-\end{align}
- %]]></script>
+\end{align} %]]></script>
 
 <p>As far as mixture VAEs, this is probably the simplest one. Furthermore, M2 was successfully used for semi-supervised learning, so it is a bit unfortunate that the GMVAE authors did not evaluate the performance of unsupervised M2. So that’s <a href="http://nbviewer.jupyter.org/github/RuiShu/vae-clustering/blob/master/experiments.ipynb">what I did</a>.</p>
 
-<p>I trained M2 on the MNIST data set in an unsupervised manner. During training, I kept track of the conditional entropy $\mathcal{H}(Y\mid X)$, the variational loss (which I define to be the negative variational lower bound), and the cluster accuracy. The cluster accuracy metric is defined in the section 4.2 of the GMVAE paper: we assign the class label to the cluster based on the most-frequently-occuring label within a cluster. The test set performance over time for each metric is shown respectively.</p>
+<p>I trained M2 on the MNIST data set in an unsupervised manner. During training, I kept track of the conditional entropy $\mathcal{H}(Y\mid X)$, the variational loss (which I define to be the negative variational lower bound), and the cluster accuracy. The cluster accuracy metric is defined in section 4.2 of the GMVAE paper: we assign the class label to the cluster based on the most-frequently-occuring label within a cluster. The test set performance over time for each metric is shown respectively.</p>
 
-<p><img src="/images/gmvae/m2.png" alt="My Image" width="1000px" /></p>
+<p><img src="http://localhost:4000/images/gmvae/m2.png" alt="My Image" width="1000px" /></p>
 
-<p>The results were horrifyingly dismal. It was quite remarkable to see just how poorly M2 performs at unsupervised clustering! In fact, it is painfully obvious that $Y$ was not used <em>at all</em>. The conditional entropy indicates that $q(y \mid x)$ is a uniform distribution. The accuracy v. time plot is most striking: at some point, $Y$ was in fact encoding the class label information of $X$ (to some extent), but then proceeded to give up on encoding into $Y$ entirely.</p>
+<p>The results are horrifyingly dismal. It is quite remarkable to see just how poorly M2 performs at unsupervised clustering! In fact, it is painfully obvious that $Y$ was not used <em>at all</em>. The conditional entropy indicates that $q(y \mid x)$ is a uniform distribution. The <em>Accuracy v. Epochs</em> plot is most striking: at some point, $Y$ was in fact encoding the class label information of $X$ (to some extent), but then proceeded to give up on this endeavor entirely.</p>
 
 <h3 id="so-why-did-the-model-fail">So Why Did the Model Fail?</h3>
 
 <p>To some extent, yes, the “anti-clustering” prior obviously played a role. But that is not a satisfactory explanation, because the question still remains: why on earth <em>wasn’t</em> it useful to encode information about $X$ into $Y$? Even if the mutual information between $Y$ and $X$ is maximal, we would only incur a penalty of $\sim2.3$ nats. One would imagine that correctly realizing that there are actually 10 different manifolds in the data-generating distribution is worth more than $2.3$ nats.</p>
 
-<p>I have a hunch for why the model failed. If you pay close attention, you will notice that the inference model infers $z$ as follows,</p>
+<p>I have a hunch as to why the model failed. If you pay close attention, you will notice that the marginal distribution of $Z$ in the inference model is</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
-
 \begin{align}
 q(z \mid x) &= \sum_i q(z, y \mid x) \\
 &= \sum_i q(y \mid x) q(z \mid x, y).
-\end{align}
- %]]></script>
+\end{align} %]]></script>
 
-<p>Recall that we are using independent Gaussians as our variational family. If our model reduces the conditional entropy $\mathcal{H}(Y \mid X)$ to zero (i.e. maximize the mutual information $I(X, Y)$), $q(z \mid x)$ reduces to a Gaussian. But if $Y$ is not informative about $X$, we <em>get to expand our variational family to the set of Gaussian mixtures</em>.</p>
+<p>Recall that we are using independent Gaussians as our variational family. If our model reduces the conditional entropy $\mathcal{H}(Y \mid X)$ to zero (i.e. maximal mutual information $I(X, Y)$), $q(z \mid x)$ reduces to a Gaussian. But if $Y$ is not informative about $X$, we <em>get to expand our variational family to the set of Gaussian mixtures</em>.</p>
 
 <p>At the end of the day, M2 only cares about minimizing the variational loss. So it asks a simple question:</p>
 
@@ -206,12 +190,11 @@ q(z \mid x) &= \sum_i q(z, y \mid x) \\
 
 <p>One thing I did not like about my previous hypothesis was that it felt like a cop-out. I am quite confident that if our variational family is better, $Y$ would be used. That M2 doesn’t encode into $Y$ is likely a manifestation of <a href="http://bayesiandeeplearning.org/papers/BDL_44.pdf">over-pruning</a> and the <a href="https://arxiv.org/abs/1611.02731v1">bits-back coding</a> mechanism.</p>
 
-<p>I wanted to know if there is a <em>simpler</em> way to encourage encoding into $Y$ while adhering strictly to the variational framework. Simply put, I wanted to demonstrate that the “anti-clustering” prior <em>can</em> be easily overcome witout having to tweak our objective function with $\eta$ or the Consistency Violation term.</p>
+<p>I wanted to know if there is a <em>simpler</em> way to encourage encoding into $Y$ while adhering strictly to the variational framework. Simply put, I wanted to demonstrate that the “anti-clustering” prior <em>can</em> be easily overcome without having to tweak our objective function with $\eta$ or the Consistency Violation term.</p>
 
-<p>It turns out that a simple solution did exist. After some thought, I realized that the M2 model is not just any mixture VAE—it is a Gaussian Mixture VAE! To see this more clearly, we will have to pry open the $\mu_x(\cdot)$ function.</p>
+<p>It turns out that a simple solution does exist. After some thought, I realized that the M2 model is not just any mixture VAE—it is a Gaussian Mixture VAE! To see this more clearly, we will have to pry open the $\mu_x(\cdot)$ function.</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
-
 \begin{align}
 h_1 &=  W_y y + W_z z\\
 a_1 &= \text{ReLU}(h_1)\\
@@ -219,90 +202,81 @@ h_2 &= W_2 a_1 + \beta_2\\
 a_2 &= \text{ReLU}(h_1)\\
 &~~\vdots \\
 \mu_x(y, z) &:= W_n a_{n-1} + \beta_n.
-\end{align}
- %]]></script>
+\end{align} %]]></script>
 
-<p>Note that $H_1$ is a deterministic function of the random variables $Z$ and $Y$. Since $z$ is drawn from a unit Gaussian and $y$ is a one-hot vector, we have a mixture of Gaussians in the space of $H_1$. As a result, it’s not too much of a stretch to claim equivalency between the three Bayesian structures shown below. Out of convenience, I represent the deterministic transformation $h = W_y y + W_z z$ with dotted arrows. All other arrows represent conditinonal Gaussian or Bernoulli distributions where appropriate.</p>
+<p>Note that $H_1$ is a deterministic function of the random variables $Z$ and $Y$. Since $z$ is drawn from a unit Gaussian and $y$ is a one-hot vector, we have a mixture of Gaussians in the space of $H_1$. As a result, it’s not too much of a stretch to claim equivalency between the three Bayesian structures shown below. Out of convenience, I represent the deterministic transformation $h = W_y y + W_z z$ with dotted arrows. All other arrows represent conditional Gaussian or Bernoulli distributions where appropriate.</p>
 
-<p style="text-align: center;"><img src="/images/gmvae/equivalent.png" alt="My Image" width="500px" /></p>
+<p style="text-align: center;"><img src="http://localhost:4000/images/gmvae/equivalent.png" alt="My Image" width="500px" /></p>
 
 <p>There are, however, two set-backs. First, since $W_z$ is independent of $Y$, we have a mixture of Gaussians whose components all share the same covariance. And more crucially, even if we force $W_z$ to be a square matrix, we have no guarantee that it is positive definite. To address both issues, I made a simple change</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
-
 \begin{align}
-W_z &:= \text{diag}(\text{softplus}(W_s y))
-\end{align}
- %]]></script>
+W_z &:= \text{diag}(\text{softplus}(W_s y)).
+\end{align} %]]></script>
 
-<p>I chose a diagonal covariance structure for simplicity, but the important point is that $W_z$ is now forced to be positive-definite. So let’s see how well this modified version of M2 does.</p>
+<p>I chose a diagonal covariance structure for simplicity, but the important point is that $W_z$ is now forced to be positive definite. So let’s see how well this modified version of M2 does.</p>
 
-<p><img src="/images/gmvae/modified_m2_method=relu.png" alt="My Image" width="1000px" /></p>
+<p><img src="http://localhost:4000/images/gmvae/modified_m2_method=relu.png" alt="My Image" width="1000px" /></p>
 
-<p>It turns out this simple change made a huge difference! By explicitly making the transformation matrix positive-definite, it’s as if we tied the generative model down and told it </p>
+<p>It turns out this simple change made a huge difference! By explicitly making the transformation matrix positive definite, it’s as if we tied the generative model down and told it</p>
 
 <blockquote>
   <p><em>You have to use a non-degenerate mixture of Gaussians</em> <strong>or I will cut you</strong></p>
 </blockquote>
 
-<p>Surprisingly, we made no change to the inference model at all. We simply restricted the generative model to display a specific behavior, which indirectly led to the modified-M2 deciding that having 10 different data-generating manifolds <em>is</em> a good thing.</p>
+<p>Surprisingly, we made no change to the inference model at all. We simply restricted the generative model to exhibit a specific behavior, which indirectly led to the modified-M2 deciding that having 10 different data-generating manifolds <em>is</em> a good thing.</p>
 
 <h3 id="the-real-gaussian-mixture-vae">The Real Gaussian Mixture VAE</h3>
 
 <p>One odd behavior I encountered when using the modified-M2 is that the loss would suddenly become NaN after several hundred epochs. I imagine clipping the gradients would prevent this from happening, but it is interesting that this behavior appears at all. I attribute this to optimization challenges associated with the specific way the modified-M2 is trained.</p>
 
-<p>There is something quite awkward about the modified-M2 model training objective. Our actual latent variable of interest is now $h_1$, which we have forced to be distributed according to a proper mixture of Gaussians. However our inference model never explicitly computes $q(h_1 \mid x, y)$. Instead, we perform inference on $z$, which really only serves as an auxiliary variable for generating $h_1$. This means we are performing inference on the auxiliary variable used in the reparameterization trick! That can’t be a good thing, can it?</p>
+<p>There is something quite awkward about the modified-M2 model training objective. Our actual latent variable of interest is now $H_1$, which we have forced to be distributed according to a proper mixture of Gaussians. However our inference model never explicitly computes $q(h_1 \mid x, y)$. Instead, we perform inference on $Z$, which really only serves as an auxiliary variable for generating $H_1$. This means we are performing inference on the auxiliary variable used in the reparameterization trick! That can’t be a good thing, can it?</p>
 
-<p>To address this, let’s reorganize both our generative and inference models to better reflect that our model contains a single-stochastic layer whose marginal distribution is a mixture of Gaussians. We do so as via the following</p>
+<p>To address this, let’s reorganize our generative model to better reflect that our model contains a single-stochastic layer whose marginal distribution is a mixture of Gaussians. We do so via the following</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
-
 \begin{align}
 p(x, y, z) &= p(y)p(z \mid y)p(x \mid z)\\
 y &\sim \text{Cat}(1/K) \\
 z &\sim \mathcal{N}(\mu_z(y), \sigma_z^2(y))\\
 x &\sim \mathcal{B}(\mu_x(z)),
-\end{align}
- %]]></script>
+\end{align} %]]></script>
 
 <p>I stress that our inference model remains exactly the same.</p>
 
-<script type="math/tex; mode=display">
-q(y, z \mid x) = q(z \mid y) q(z \mid x, y).
-</script>
+<script type="math/tex; mode=display">q(y, z \mid x) = q(z \mid y) q(z \mid x, y).</script>
 
-<p>From a computation stand-point the M2, modified-M2, and real GMVAE models use the same inference networks. However, we interpret the GMVAE inference model <em>very</em> differently. In particular, the marginal distribution of $z$ is now a mixture of Gaussians, and we use a Gaussian $q(z \mid x, y)$ to approximate the posterior. Putting everything together, our variational lower bound becomes</p>
+<p>From a computation stand-point the M2, modified-M2, and real GMVAE models use the same inference networks. However, we interpret the GMVAE inference model <em>very</em> differently. In particular, the marginal distribution of $Z$ is now a mixture of Gaussians, and we use a Gaussian $q(z \mid x, y)$ to approximate the posterior. Putting everything together, our variational lower bound becomes</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
-
 \begin{align}
 \mathcal{L} 
 &= \E_{q(y, z \mid x)}\brac{\ln p(x, y, z) - \ln q(y, z \mid x)} \\
 &= \E_{q(y, z \mid x)}\brac{ \ln \frac{p(y)}{q(y \mid x)} + \ln \frac{p(z \mid y)}{q(z \mid x, y)} + \ln p(x \mid y, z)}.
-\end{align}
- %]]></script>
+\end{align} %]]></script>
 
-<p>I took the liberty of grouping like-terms together. Unlike the modified-M2, signal from the objective function is directly propagated into $p(z \mid y)$, which hopefully provides a stronger signal for $p(z \mid y)$ to be informative. Using our new-and-improved real GMVAE, I achieved the following results.</p>
+<p>I took the liberty of grouping like-terms together. Unlike the modified-M2, signal from the objective function is directly propagated into $p(z \mid y)$, which hopefully provides a stronger signal for $Y$ to be informative about $X$. Using our new-and-improved real GMVAE, I achieved the following results.</p>
 
-<p><img src="/images/gmvae/gmvae.png" alt="My Image" width="1000px" /></p>
+<p><img src="http://localhost:4000/images/gmvae/gmvae.png" alt="My Image" width="1000px" /></p>
 
-<p>The improvement is striking! The real GMVAE with proper inference achieves the best performance out of all three models. I ran the same experiment multiple times. By the 1000th epoch, five out of six replicates achieved performances above 85%. One of them even achieved an accuracy of 95%! Surprisingly, our real GMVAE managed to outperform all of the “GMVAE K=10” models both in terms of best run and average run. Also, in constrast to the models from the paper, I didn’t have to rely on convolutional layers, Consistency Violation, or $\eta$, which I consider a personal victory. <em>*blows knuckles*</em></p>
+<p>The improvement is striking! The real GMVAE with proper inference achieves the best performance out of all three models. I ran the same experiment multiple times. By the 1000th epoch, five out of six replicates achieved accuracy performances above 85%. One of them even achieved an accuracy of 95%! Surprisingly, our real GMVAE managed to outperform all of the “GMVAE K=10” models both in terms of best run and average run. Also, in constrast to the models from the paper, I didn’t have to rely on convolutional layers, Consistency Violation, or $\eta$, which I consider a personal victory. <em>*blows knuckles*</em></p>
 
-<p><img src="/images/gmvae/combined.png" alt="My Image" width="1000px" /></p>
+<p><img src="http://localhost:4000/images/gmvae/combined.png" alt="My Image" width="1000px" /></p>
 
-<p>To get a better comparison of the models, I also superimposed all three model performances. In doing so, we actually get to see something pretty interesting. If we look at the middle <em>Variational Loss v. Epochs</em> plot, M2 achieves the best loss value despite its poor clustering ability. Modified-M2, on the other hand, has a constrained generative model which led to higher variational loss <em>but</em> better clustering. While not definitive, I think this lends further credence to the hypothesis that M2 chooses a Gaussian Mixture variational family over a Gaussian Mixture manifold because the former leads to better loss performance.</p>
+<p>To get a better comparison of the models, I also superimposed all three model performances. In doing so, we actually get to see something pretty interesting. If we look at the middle <em>Variational Loss v. Epochs</em> plot, M2 achieves the best loss value despite its poor clustering ability. Modified-M2, on the other hand, has a constrained generative model which led to higher variational loss <em>but</em> better clustering. While not definitive, I think this lends further credence to the hypothesis that M2 chooses a Gaussian Mixture variational family over a Gaussian Mixture manifold because the former leads to lower variational loss.</p>
 
 <hr />
 
 <h3 id="final-remarks">Final Remarks</h3>
 
-<p>These experiments helped me get a better understanding of what’s going on behind the scenes of deep generative models that use variational inference. Making these tiny tweaks <em>only</em> to the generative model and arriving at vastly different model behaviors speaks volumes about the importance of really grokking the training of deep generative models with deep amortized variational inference.</p>
+<p>These experiments helped me get a better understanding of what’s going on behind the scenes of deep generative models that use variational inference. Making these tiny tweaks <em>only</em> to the generative model and arriving at vastly different model behaviors speaks volumes about the importance of really grokking deep generative models and deep amortized variational inference.</p>
 
-<p>If we really only cared about building a deep generative model, we probably don’t care much about whether certain latent variables are being pruned so long as we get a good log-likelihood score. However, if the plan is to repurpose the inference model for a downstream task such as classification or interpretable representations, we should pay more attention to how we set up both the inference <em>and</em> generative models. On that note, I think there is still value in the Consistency Violation term because it gives us explicit control over what the generative model is doing. We can think of CV almost like a prior imposed on the behavior of the generative model, and I imagine it being very useful as we move to deeper DLGMs. I would not be surprised if applying CV to the real GMVAE will lead to even better clustering performance. </p>
+<p>If we really only cared about building a deep generative model, we probably won’t care much about whether certain latent variables are being pruned so long as we get a good log-likelihood score. However, if the plan is to repurpose the inference model for a downstream task such as classification or interpretable representations, we should pay more attention to how we set up both the inference <em>and</em> generative models. On that note, I think there is still value in the Consistency Violation term because it gives us explicit control over what the generative model is doing. We can think of CV almost like a prior imposed on the behavior of the generative model, and I imagine it being very valuable once we move to deeper DLGMs or more mixture components. I would also not be surprised if applying CV to the real GMVAE leads to even better clustering performance.</p>
 
 <p>But hopefully, I’ll never see a term like $\eta$ ever again. Because I think there are definitely more elegant and insightful ways of getting the generative model to do what we want.</p>
 
-<p>Wait, what’s this <a href="https://openreview.net/forum?id=Sy2fzU9gl">paper</a>?  (╯°□°)╯︵ ┻━┻</p>
+<p>Wait, what’s this <a href="https://openreview.net/forum?id=Sy2fzU9gl">paper</a>? A $\beta$ term…? (╯°□°)╯︵ ┻━┻</p>
 
 <hr />
 
@@ -356,20 +330,14 @@ q(y, z \mid x) = q(z \mid y) q(z \mid x, y).
   
     <a target="_top"
        class="main" 
-       href="/about">
+       href="http://localhost:4000/about">
        About
      </a>
   
     <a target="_top"
        class="main" 
-       href="/">
+       href="http://localhost:4000/">
        Blog
-     </a>
-  
-    <a target="_top"
-       class="main" 
-       href="/cv">
-       CV
      </a>
   
     <a target="_blank"
@@ -384,7 +352,7 @@ q(y, z \mid x) = q(z \mid y) q(z \mid x, y).
   <a href="http://github.com/muan/scribble" class="muted">built with Jekyll using Scribble theme</a>
   <br />
   <br />
-  <img src="/images/scribble2.png" alt="scribble" /> 
+  <img src="http://localhost:4000/images/scribble2.png" alt="scribble" /> 
 </footer>
   </body>
 </html>

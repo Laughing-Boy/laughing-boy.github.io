@@ -8,10 +8,11 @@ title: Academically
 <!-- I have a strong interest in the intersection of deep learning, reinforcement learning, unsupervised learning, and computer vision. My current interest lies in the use of deep generative models for vision-based reinforcement learning tasks and sparse-reward environments. In the past, I have also done research related to probabilistic graphical models and Gaussian processes. -->
 
 
-```python
-class Test():
-    hi
-```
+{% highlight ruby %}
+def whaaa
+  puts "I have a friend called Bobobmob."
+end
+{% endhighlight %}
 
 <!-- ## Education -->
 <!-- **Stanford University**. M.Sc., Biomedical Informatics. Expected graduation June 2017. -->

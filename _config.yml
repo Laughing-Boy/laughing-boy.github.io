@@ -17,8 +17,3 @@ links:
 highlighter:      rouge
 permalink:        pretty
 markdown:         kramdown
-kramdown:
-  input: GFM
-  syntax_highlighter: rouge
-extensions:
-  - smart
