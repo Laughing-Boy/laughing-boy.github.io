@@ -14,6 +14,7 @@ links:
   - name:         GitHub
     url:          http://github.com/RuiShu
     external:     true
+highlighter:      rouge
 permalink:        pretty
 markdown:         kramdown
 kramdown:

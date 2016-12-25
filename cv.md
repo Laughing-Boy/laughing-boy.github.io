@@ -11,7 +11,6 @@ title: Academically
 ```python
 class Test():
     hi
-
 ```
 
 <!-- ## Education -->
