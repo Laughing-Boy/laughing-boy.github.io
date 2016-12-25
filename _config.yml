@@ -1,7 +1,7 @@
 title:            Rui Shu
 description:      A jekyll theme. Because I scribble.
 url:              #
-signoff:          Rui Shu
+signoff:          #
 disqus_shortname: ruishu-io
 facebook_appid:   # appid for like button, remove from /_includes/share.html if unwanted.
 google_analytics: # set tracking, remove from /javascripts/basic.js if unwanted.
