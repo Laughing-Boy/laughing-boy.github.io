@@ -1,4 +1,5 @@
 source 'http://rubygems.org'
 
-gem 'github-pages'
-gem 'rouge'
+gem 'rouge', '2.0.7'
+gem 'jekyll'
+gem 'middleman-syntax'

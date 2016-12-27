@@ -13,11 +13,10 @@
   &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;I have a friend called Bobobmob.&quot;&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;code&gt;ruby
-def whaaa
+&lt;pre&gt;&lt;code class=&quot;language-ruby&quot;&gt;def whaaa
   puts &quot;I have a friend called Bobobmob.&quot;
 end
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;hr /&gt;
 
@@ -36,11 +35,9 @@ end
     
       <item>
         <title>Gaussian Mixture VAE&#58; Lessons about Variational Inference, Generative Modeling, and Deep Nets</title>
-        <description>&lt;script type=&quot;math/tex; mode=display&quot;&gt;
-\newcommand{\E}{\mathbb{E}}
+        <description>&lt;script type=&quot;math/tex; mode=display&quot;&gt;\newcommand{\E}{\mathbb{E}}
 \newcommand{\brac}[1]{\left[#1\right]}
-\newcommand{\paren}[1]{\left(#1\right)}
-&lt;/script&gt;
+\newcommand{\paren}[1]{\left(#1\right)}&lt;/script&gt;
 
 &lt;p&gt;Not too long ago, I came across this &lt;a href=&quot;https://arxiv.org/abs/1611.02648&quot;&gt;paper&lt;/a&gt; on unsupervised clustering with Gaussian Mixture VAEs. I was quite surprised, especially since I had worked on a &lt;em&gt;very&lt;/em&gt; similar (maybe the same?) concept &lt;a href=&quot;https://github.com/RuiShu/vae-experiments/tree/master/modality&quot;&gt;a few months back&lt;/a&gt;. It’s an interesting read, so I do recommend it. But the basic gist of it is: instead of a typical VAE-based deep generative model with layers of Gaussian latent variables, the authors propose using a &lt;em&gt;mixture&lt;/em&gt; of Gaussians for one of the layers. In doing so, we can now do unsupervised clustering with the new Gaussian Mixture VAE (GMVAE) model.&lt;/p&gt;
 
@@ -53,15 +50,13 @@ end
 &lt;p&gt;One thing that bugged me was that they didn’t actually have a mixture of Gaussians per se. In their paper, they used the following generative model&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-
 \begin{align}
 p(x, y, z_1, z_2) &amp;= p(y)p(z_2)p(z_1 \mid y, z_2) p(x \mid z_1)\\
 y &amp;\sim \text{Cat}(1/K) \\
 z_2 &amp;\sim \mathcal{N}(0, I) \\
 z_1 &amp;\sim \mathcal{N}(\mu_z(y, z_2), \sigma_z^2(y, z_2))\\
 x &amp;\sim \mathcal{B}(\mu_x(z_1)),
-\end{align}
- %]]&gt;&lt;/script&gt;
+\end{align} %]]&gt;&lt;/script&gt;
 
 &lt;p&gt;I should note that my naming choices differ from theirs and is more in keeping with previously established naming convention. Anyway, the authors noted that $Z_1\vert Z_2$ is a Gaussian mixture, which inspired the name GMVAE. But once you marginalize out $Z_2$, the distribution in $Z_1$ is actually an arbitrary distribution thanks to the non-linearities in the $\mu_z(\cdot)$ function. So what they really have is a mixture of arbitrary distributions in the space of $Z_1$. I think the naming convention is a bit unfortunate, but I can also see why they chose it. But in any case, at least it’s still a mixture of distributions!&lt;/p&gt;
 
@@ -72,14 +67,12 @@ x &amp;\sim \mathcal{B}(\mu_x(z_1)),
 &lt;p&gt;In order to perform clustering well, the authors made an eyebrow-raising modification to the standard variational objective. In particular, they introduced a new $\eta$ term. For the generative model mentioned above, the variational lower bound of $p(x)$ is&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-
 \begin{align}
 \mathcal{L}
 &amp;= \E_{q(y, z_{1:2} \mid x)} \brac{\ln p(y)p(z_2)(z_1 \mid y)p(x \mid z_1) - \ln q(y, z_{1:2} \mid x)}\\
 &amp;= \E_{q(y \mid x)}[\ln p(y) - \ln q(y \mid x)] + \text{more terms}\\
 &amp;= -KL(q(y \mid x) \| p(y)) + \text{more terms}.
-\end{align}
- %]]&gt;&lt;/script&gt;
+\end{align} %]]&gt;&lt;/script&gt;
 
 &lt;p&gt;With a bit of refactoring, you will find that the lower bound can be re-expressed to show the effect of the KL-divergence between $q(y \mid x)$ and $p(y)$. The argument goes: since $q(y \mid x)$ is forced to be close to the prior, the KL-term has an anti-clustering effect and thus needs to be down-weighted by some factor $\eta$ during training.&lt;/p&gt;
 
@@ -91,21 +84,19 @@ x &amp;\sim \mathcal{B}(\mu_x(z_1)),
 
 &lt;h3 id=&quot;revisiting-kingmas-m2-model&quot;&gt;Revisiting Kingma’s M2 Model&lt;/h3&gt;
 
-&lt;p&gt;The big question is then: does using the discrete $Y$ actually help improve the variational lower bound? In other words, does encoding into $Y$ help more than it hurts? Intuitively, the answer seems to be yes—for the right type of data. In MNIST, for example, there are very clearly 10 different classes. It seems natural that an optimal encoding will involve a categorical variable. &lt;/p&gt;
+&lt;p&gt;The big question is then: does using the discrete $Y$ actually help improve the variational lower bound? In other words, does encoding into $Y$ help more than it hurts? Intuitively, the answer seems to be yes—for the right type of data. In MNIST, for example, there are very clearly 10 different classes. It seems natural that an optimal encoding will involve a categorical variable.&lt;/p&gt;
 
 &lt;p&gt;It would be nice to know, without all the bells and whistles of weighting terms and Consistency Violation, how well a mixture VAE trained using the vanilla variational objective would perform as a clustering algorithm. Fortunately, the &lt;a href=&quot;https://arxiv.org/abs/1611.02648&quot;&gt;paper&lt;/a&gt; does provide such an example in Figure 2d. However, they did not provide a quantitative measure of how well the model would perform on the MNIST unuspervised clustering task. More importantly, they are training their 2-stochastic-layer model using mean-field approximation. It is notoriously difficult to train Deep Latent Gaussian Models (DLGMs) when you restrict the variational family to the set of independent Gaussians, and a lot of work had been done to find better ways of doing &lt;a href=&quot;https://arxiv.org/abs/1602.02282&quot;&gt;structured mean-field inference&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;In order to not potentially conflate multiple contributing factors, let’s make our experiment as possible and revisit Kingma’s M2 model. In Kingma’s original &lt;a href=&quot;https://arxiv.org/abs/1406.5298&quot;&gt;semi-supervised learning paper&lt;/a&gt;, Kingma proposed a simple generative model of the form&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-
 \begin{align}
 p(x, y, z) &amp;= p(y)p(z) p(x \mid y, z)\\
 y &amp;\sim \text{Cat}(1/K) \\
 z &amp;\sim \mathcal{N}(0, I) \\
 x &amp;\sim \mathcal{B}(\mu_x(y, z)).
-\end{align}
- %]]&gt;&lt;/script&gt;
+\end{align} %]]&gt;&lt;/script&gt;
 
 &lt;p&gt;As far as mixture VAEs, this is probably the simplest one. Furthermore, M2 was successfully used for semi-supervised learning, so it is a bit unfortunate that the GMVAE authors did not evaluate the performance of unsupervised M2. So that’s &lt;a href=&quot;http://nbviewer.jupyter.org/github/RuiShu/vae-clustering/blob/master/experiments.ipynb&quot;&gt;what I did&lt;/a&gt;.&lt;/p&gt;
 
@@ -122,12 +113,10 @@ x &amp;\sim \mathcal{B}(\mu_x(y, z)).
 &lt;p&gt;I have a hunch as to why the model failed. If you pay close attention, you will notice that the marginal distribution of $Z$ in the inference model is&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-
 \begin{align}
 q(z \mid x) &amp;= \sum_i q(z, y \mid x) \\
 &amp;= \sum_i q(y \mid x) q(z \mid x, y).
-\end{align}
- %]]&gt;&lt;/script&gt;
+\end{align} %]]&gt;&lt;/script&gt;
 
 &lt;p&gt;Recall that we are using independent Gaussians as our variational family. If our model reduces the conditional entropy $\mathcal{H}(Y \mid X)$ to zero (i.e. maximal mutual information $I(X, Y)$), $q(z \mid x)$ reduces to a Gaussian. But if $Y$ is not informative about $X$, we &lt;em&gt;get to expand our variational family to the set of Gaussian mixtures&lt;/em&gt;.&lt;/p&gt;
 
@@ -154,7 +143,6 @@ q(z \mid x) &amp;= \sum_i q(z, y \mid x) \\
 &lt;p&gt;It turns out that a simple solution does exist. After some thought, I realized that the M2 model is not just any mixture VAE—it is a Gaussian Mixture VAE! To see this more clearly, we will have to pry open the $\mu_x(\cdot)$ function.&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-
 \begin{align}
 h_1 &amp;=  W_y y + W_z z\\
 a_1 &amp;= \text{ReLU}(h_1)\\
@@ -162,8 +150,7 @@ h_2 &amp;= W_2 a_1 + \beta_2\\
 a_2 &amp;= \text{ReLU}(h_1)\\
 &amp;~~\vdots \\
 \mu_x(y, z) &amp;:= W_n a_{n-1} + \beta_n.
-\end{align}
- %]]&gt;&lt;/script&gt;
+\end{align} %]]&gt;&lt;/script&gt;
 
 &lt;p&gt;Note that $H_1$ is a deterministic function of the random variables $Z$ and $Y$. Since $z$ is drawn from a unit Gaussian and $y$ is a one-hot vector, we have a mixture of Gaussians in the space of $H_1$. As a result, it’s not too much of a stretch to claim equivalency between the three Bayesian structures shown below. Out of convenience, I represent the deterministic transformation $h = W_y y + W_z z$ with dotted arrows. All other arrows represent conditional Gaussian or Bernoulli distributions where appropriate.&lt;/p&gt;
 
@@ -172,17 +159,15 @@ a_2 &amp;= \text{ReLU}(h_1)\\
 &lt;p&gt;There are, however, two set-backs. First, since $W_z$ is independent of $Y$, we have a mixture of Gaussians whose components all share the same covariance. And more crucially, even if we force $W_z$ to be a square matrix, we have no guarantee that it is positive definite. To address both issues, I made a simple change&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-
 \begin{align}
 W_z &amp;:= \text{diag}(\sqrt{\text{softplus}(W_s y)}).
-\end{align}
- %]]&gt;&lt;/script&gt;
+\end{align} %]]&gt;&lt;/script&gt;
 
 &lt;p&gt;I chose a diagonal structure for simplicity, but the important point is that $W_z$ is now forced to be positive definite. So let’s see how well this modified version of M2 does.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/gmvae/modified_m2_method=relu.png&quot; alt=&quot;My Image&quot; width=&quot;1000px&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;It turns out this simple change made a huge difference! By explicitly making the transformation matrix positive definite, it’s as if we tied the generative model down and told it &lt;/p&gt;
+&lt;p&gt;It turns out this simple change made a huge difference! By explicitly making the transformation matrix positive definite, it’s as if we tied the generative model down and told it&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;&lt;em&gt;You have to use a non-degenerate mixture of Gaussians&lt;/em&gt; &lt;strong&gt;or I will cut you&lt;/strong&gt;&lt;/p&gt;
@@ -199,31 +184,25 @@ W_z &amp;:= \text{diag}(\sqrt{\text{softplus}(W_s y)}).
 &lt;p&gt;To address this, let’s reorganize our generative model to better reflect that our model contains a single-stochastic layer whose marginal distribution is a mixture of Gaussians. We do so via the following&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-
 \begin{align}
 p(x, y, z) &amp;= p(y)p(z \mid y)p(x \mid z)\\
 y &amp;\sim \text{Cat}(1/K) \\
 z &amp;\sim \mathcal{N}(\mu_z(y), \sigma_z^2(y))\\
 x &amp;\sim \mathcal{B}(\mu_x(z)),
-\end{align}
- %]]&gt;&lt;/script&gt;
+\end{align} %]]&gt;&lt;/script&gt;
 
 &lt;p&gt;I stress that our inference model remains exactly the same.&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;
-q(y, z \mid x) = q(z \mid y) q(z \mid x, y).
-&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;q(y, z \mid x) = q(z \mid y) q(z \mid x, y).&lt;/script&gt;
 
 &lt;p&gt;From a computation stand-point the M2, modified-M2, and real GMVAE models use the same inference networks. However, we interpret the GMVAE inference model &lt;em&gt;very&lt;/em&gt; differently. In particular, the marginal distribution of $Z$ is now a mixture of Gaussians, and we use a Gaussian $q(z \mid x, y)$ to approximate the posterior. Putting everything together, our variational lower bound becomes&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-
 \begin{align}
 \mathcal{L} 
 &amp;= \E_{q(y, z \mid x)}\brac{\ln p(x, y, z) - \ln q(y, z \mid x)} \\
 &amp;= \E_{q(y, z \mid x)}\brac{ \ln \frac{p(y)}{q(y \mid x)} + \ln \frac{p(z \mid y)}{q(z \mid x, y)} + \ln p(x \mid y, z)}.
-\end{align}
- %]]&gt;&lt;/script&gt;
+\end{align} %]]&gt;&lt;/script&gt;
 
 &lt;p&gt;I took the liberty of grouping like-terms together. Unlike the modified-M2, signal from the objective function is directly propagated into $p(z \mid y)$, which hopefully provides a stronger signal for $Y$ to be informative about $X$. Using our new-and-improved real GMVAE, I achieved the following results.&lt;/p&gt;
 
@@ -241,7 +220,7 @@ q(y, z \mid x) = q(z \mid y) q(z \mid x, y).
 
 &lt;p&gt;These experiments helped me get a better understanding of what’s going on behind the scenes of deep generative models that use variational inference. Making these tiny tweaks &lt;em&gt;only&lt;/em&gt; to the generative model and arriving at vastly different model behaviors speaks volumes about the importance of really grokking deep generative models and deep amortized variational inference.&lt;/p&gt;
 
-&lt;p&gt;If we really only cared about building a deep generative model, we probably won’t care much about whether certain latent variables are being pruned so long as we get a good log-likelihood score. However, if the plan is to repurpose the inference model for a downstream task such as classification or interpretable representations, we should pay more attention to how we set up both the inference &lt;em&gt;and&lt;/em&gt; generative models. On that note, I think there is still value in the Consistency Violation term because it gives us explicit control over what the generative model is doing. We can think of CV almost like a prior imposed on the behavior of the generative model, and I imagine it being very valuable once we move to deeper DLGMs or more mixture components. I would also not be surprised if applying CV to the real GMVAE leads to even better clustering performance. &lt;/p&gt;
+&lt;p&gt;If we really only cared about building a deep generative model, we probably won’t care much about whether certain latent variables are being pruned so long as we get a good log-likelihood score. However, if the plan is to repurpose the inference model for a downstream task such as classification or interpretable representations, we should pay more attention to how we set up both the inference &lt;em&gt;and&lt;/em&gt; generative models. On that note, I think there is still value in the Consistency Violation term because it gives us explicit control over what the generative model is doing. We can think of CV almost like a prior imposed on the behavior of the generative model, and I imagine it being very valuable once we move to deeper DLGMs or more mixture components. I would also not be surprised if applying CV to the real GMVAE leads to even better clustering performance.&lt;/p&gt;
 
 &lt;p&gt;But hopefully, I’ll never see a term like $\eta$ ever again. Because I think there are definitely more elegant and insightful ways of getting the generative model to do what we want.&lt;/p&gt;
 
