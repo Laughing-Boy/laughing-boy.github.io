@@ -1,7 +1,7 @@
 <html>
   <head>
-    <meta content='BatchNormalization - Rui Shu' property='og:title' />
-    <title>BatchNormalization - Rui Shu</title>
+    <meta content='A Gentle Guide to Using Batch Normalization in Tensorflow - Rui Shu' property='og:title' />
+    <title>A Gentle Guide to Using Batch Normalization in Tensorflow - Rui Shu</title>
     <link href='/images/fav.png' rel='shortcut icon'>
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css' />
 <link href='/stylesheets/style.css' rel='stylesheet' type='text/css' />
@@ -19,7 +19,7 @@
 <meta content="" property="fb:app_id" />
 
   <meta content='/2016/12/27/batchnorm/' property='og:url' />
-  <meta content="{% highlight ruby %}def whaaa  puts "I have a friend called Bobobmob."end{% endhighlight %}```rubydef whaaa  puts "I ..." property='og:description' />
+  <meta content="I recently made the switch to TensorFlow and am very happy with how easy it was to [get things done](https://github.c..." property='og:description' />
   <meta content="article" property="og:type" />
 
 <!-- - -->
@@ -87,27 +87,78 @@
         <section class='post'>
           <h1 class="upcase">
             <div class='date'>27 Dec 2016</div>
-            BatchNormalization
+            A Gentle Guide to Using Batch Normalization in Tensorflow
           </h1>
-          
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">whaaa</span>
-  <span class="nb">puts</span> <span class="s2">"I have a friend called Bobobmob."</span>
-<span class="k">end</span></code></pre></div>
+          <p>I recently made the switch to TensorFlow and am very happy with how easy it was to <a href="https://github.com/RuiShu/vae-clustering">get things done</a> using this awesome library. Tensorflow has come a long way since I first <a href="https://github.com/RuiShu/tensorflow-gp">experimented with it</a> in 2015, and I am happy to be back.</p>
 
-<pre><code class="language-ruby">def whaaa
-  puts "I have a friend called Bobobmob."
-end
-</code></pre>
+<p>Since I am getting myself re-acquainted with TensorFlow, I decided that I should write a post about how to do batch normalization in TensorFlow. It’s kind of weird that batch normalization still presents such a challenge for new TnesorFlow users, especially since TensorFlow comes with invaluable functions like <a href="https://github.com/tensorflow/tensorflow/blob/40dcfc6f9287d360eead23f58d63d9627c075dc5/tensorflow/g3doc/api_docs/python/functions_and_classes/shard1/tf.nn.moments.md"><code>tf.nn.moments</code></a>, <a href="https://github.com/tensorflow/tensorflow/blob/40dcfc6f9287d360eead23f58d63d9627c075dc5/tensorflow/g3doc/api_docs/python/functions_and_classes/shard8/tf.nn.batch_normalization.md"><code>tf.nn.batch_normalization</code></a>, and even <a href="https://github.com/tensorflow/tensorflow/blob/40dcfc6f9287d360eead23f58d63d9627c075dc5/tensorflow/g3doc/api_docs/python/functions_and_classes/shard4/tf.contrib.layers.batch_norm.md"><code>tf.contrib.layers.batch_norm</code></a>. One would think that using batch normalization in TensorFlow will be a cinch. But alas, confusion still crops up <a href="https://github.com/tensorflow/tensorflow/issues/4361">from time to time</a>, and the devil really lies in the details.</p>
 
-<hr />
+<h3 id="batch-normalization-the-easy-way">Batch Normalization The Easy Way</h3>
 
-<p><a href="https://github.com/RuiShu/vae-clustering" target="_blank" class="big-button gray">Code on GitHub</a></p>
+<p>Perhaps the easiest way to use batch normalization would be to simply use the <code>tf.contrib.layers.batch_norm</code> layer. So let’s give that a go!</p>
 
-<p><a href="http://nbviewer.jupyter.org/github/RuiShu/vae-clustering/blob/master/experiments.ipynb" target="_blank" class="big-button gray">Jupyter Notebook</a></p>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+<span class="kn">from</span> <span class="nn">tensorflow.examples.tutorials.mnist</span> <span class="kn">import</span> <span class="n">input_data</span>
 
-<hr />
+<span class="n">tf</span><span class="o">.</span><span class="n">reset_default_graph</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">Placeholder</span><span class="p">((</span><span class="bp">None</span><span class="p">,</span> <span class="mi">784</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s">'x'</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">Placeholder</span><span class="p">((</span><span class="bp">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s">'y'</span><span class="p">)</span>
+<span class="n">phase</span> <span class="o">=</span> <span class="n">Placeholder</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="nb">bool</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'phase'</span><span class="p">)</span>
 
-<p>http://localhost:4000/2016/12/27/batchnorm/</p>
+<span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s">'nn/layer1'</span><span class="p">):</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s">'dense1'</span><span class="p">)</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">batch_norm</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> 
+                                     <span class="n">scope</span><span class="o">=</span><span class="s">'bn1'</span><span class="p">,</span> <span class="n">is_training</span><span class="o">=</span><span class="n">phase</span><span class="p">)</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="s">'relu1'</span><span class="p">)</span>
+    
+<span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s">'nn/layer2'</span><span class="p">):</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s">'dense1'</span><span class="p">)</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">batch_norm</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> 
+                                     <span class="n">scope</span><span class="o">=</span><span class="s">'bn1'</span><span class="p">,</span> <span class="n">is_training</span><span class="o">=</span><span class="n">phase</span><span class="p">)</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="s">'relu1'</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s">'nn/logit'</span><span class="p">):</span>
+    <span class="n">logit</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s">'dense'</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s">'accuracy'</span><span class="p">):</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> 
+        <span class="n">tf</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">logit</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="s">'float32'</span><span class="p">))</span>
+
+<span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s">'loss'</span><span class="p">):</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">softmax_cross_entropy_with_logits</span><span class="p">(</span><span class="n">logit</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span></code></pre></div>
+
+<p>Because batch normalization behaves different during training versus test time, <code>tf.contrib.layers.batch_norm</code> has kindly enabled us to pass in a <code>tf.bool</code> placeholder as the <code>is_training</code> argument.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">mnist</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">read_data_sets</span><span class="p">(</span><span class="s">"MNIST_data/"</span><span class="p">,</span> <span class="n">one_hot</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">train_step</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">()</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+<span class="n">sess</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+<span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">initialize_all_variables</span><span class="p">())</span>
+
+<span class="n">iterep</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterep</span> <span class="o">*</span> <span class="mi">100</span><span class="p">):</span>
+    <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">mnist</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">next_batch</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">train_step</span><span class="p">,</span>
+             <span class="n">feed_dict</span><span class="o">=</span><span class="p">{</span><span class="s">'x:0'</span><span class="p">:</span> <span class="n">x_train</span><span class="p">,</span> <span class="s">'y:0'</span><span class="p">:</span> <span class="n">y_train</span><span class="p">,</span> <span class="s">'phase:0'</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+    <span class="n">progbar</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">iterep</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span>  <span class="n">iterep</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">tr</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">loss</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">],</span> <span class="n">feed_dict</span><span class="o">=</span><span class="p">{</span><span class="s">'x:0'</span><span class="p">:</span> <span class="n">mnist</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">images</span><span class="p">,</span> <span class="s">'y:0'</span><span class="p">:</span> <span class="n">mnist</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="s">'phase:0'</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">loss</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">],</span> <span class="n">feed_dict</span><span class="o">=</span><span class="p">{</span><span class="s">'x:0'</span><span class="p">:</span> <span class="n">mnist</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">images</span><span class="p">,</span> <span class="s">'y:0'</span><span class="p">:</span> <span class="n">mnist</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="s">'phase:0'</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+        <span class="n">history</span> <span class="o">+=</span> <span class="p">[</span><span class="n">tr</span> <span class="o">+</span> <span class="n">t</span><span class="p">]</span></code></pre></div>
+
+<p>Unfortunately, if you look at the training verus test performance over time, it looks like we have done something <em>very</em> wrong. Indeed, if we go back and read the <code>tf.contrib.layers.batch_norm</code> documentation a little more carefully, there’s a pretty important note:</p>
+
+<blockquote>
+  <p>Note: When is_training is True the moving_mean and moving_variance need to be updated, by default the update_ops are placed in tf.GraphKeys.UPDATE_OPS so they need to be added as a dependency to the train_op, example:</p>
+
+  <p>update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS) <br />
+if update_ops: updates = tf.group(*update_ops) <br />
+total_loss = control_flow_ops.with_dependencies([updates], total_loss)</p>
+</blockquote>
+
+<p>Aha!</p>
 
           <br />
 <p>
