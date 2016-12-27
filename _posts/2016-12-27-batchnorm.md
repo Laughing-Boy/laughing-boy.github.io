@@ -12,6 +12,11 @@ def whaaa
 end
 {% endhighlight %}
 
+```ruby
+def whaaa
+  puts "I have a friend called Bobobmob."
+end
+```
 
 ---
 

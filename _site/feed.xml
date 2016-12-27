@@ -13,6 +13,12 @@
   &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;I have a friend called Bobobmob.&quot;&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
+&lt;p&gt;&lt;code&gt;ruby
+def whaaa
+  puts &quot;I have a friend called Bobobmob.&quot;
+end
+&lt;/code&gt;&lt;/p&gt;
+
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;a href=&quot;https://github.com/RuiShu/vae-clustering&quot; target=&quot;_blank&quot; class=&quot;big-button gray&quot;&gt;Code on GitHub&lt;/a&gt;&lt;/p&gt;
