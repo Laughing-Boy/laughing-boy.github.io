@@ -1,6 +1,6 @@
 title:            Rui Shu
 description:      An interesting site
-url:              https://vsoch.github.io/ruishu.github.io/
+url:              #https://vsoch.github.io/ruishu.github.io/
 signoff:          #
 disqus_shortname: ruishu-io
 facebook_appid:   # appid for like button, remove from /_includes/share.html if unwanted.
