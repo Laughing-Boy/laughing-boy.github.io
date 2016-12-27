@@ -1,1 +1,3 @@
-art/
+_site/
+.sass-cache
+.ruby-version

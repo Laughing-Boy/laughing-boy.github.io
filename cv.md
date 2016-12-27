@@ -1,43 +1,31 @@
 ---
-layout: page
-title: Academically
+layout: post
+title: Placeholder post
+date: 2013-05-06 15:27:31
 ---
 
-<!-- hi -->
-<!-- ## Research Interests -->
-<!-- I have a strong interest in the intersection of deep learning, reinforcement learning, unsupervised learning, and computer vision. My current interest lies in the use of deep generative models for vision-based reinforcement learning tasks and sparse-reward environments. In the past, I have also done research related to probabilistic graphical models and Gaussian processes. -->
+I am a placeholder post. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
 
+> Boom. I am a blockquote.
+> 
+> Say something really clever here.
+
+1. List with code
+
+  ```
+  not highlighted
+  multi line
+  ```
+2. List with code{% highlight javascript %}
+var dom = document.getElementById('boom')
+console.log(dom);{% endhighlight %}
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
 
 {% highlight ruby %}
 def whaaa
   puts "I have a friend called Bobobmob."
 end
 {% endhighlight %}
-
-<!-- ## Education -->
-<!-- **Stanford University**. M.Sc., Biomedical Informatics. Expected graduation June 2017. -->
-<!-- /*Selected Courseworks*/ -->
-<!-- CS231N: Convolutional Neural Networks in Visual Recognition -->
-<!-- CS331B: Representation Learning in Computer Vision -->
-<!-- CS238: Decision Making Under Uncertainty -->
-<!-- CS239: Advanced Topics in Sequential Decision Making -->
-<!-- CS399: Independent Project with Professor Mykel Kochenderfer -->
-<!-- CS224N: Natural Language Processing -->
-<!-- CS246: Mining Massive Data Sets -->
-<!-- CS274: Representations and Algorithms in Computational Molecular Biology -->
-<!-- BIOMEDIN260: Computational Methods in Biomedical Image Analysis and Interpretation -->
-<!-- BIOMEDIN215: Data Driven Medicine -->
-
-<!-- **Dartmouth College**. B.A., Chemistry, Minor in Statistics. Graduated June 2014.  -->
-<!-- /*Selected Courseworks*/ -->
-<!-- CS95: Theoretical Machine Learning -->
-<!-- CS49: Communication Protocols and Complexity -->
-<!-- CS10: Objected Oriented Programming -->
-<!-- MATH70: Mathematical Statistics -->
-<!-- MATH50: Probability and Statistical Inference -->
-<!-- MATH23: Differential Equations -->
-<!-- CHEM76: Quantum Mechanics -->
-<!-- CHEM67: Physical Biochemistry -->
-<!-- CHEM40: Thermodynamics -->
-
-<!-- ## Publications -->

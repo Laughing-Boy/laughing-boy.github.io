@@ -1,5 +1,5 @@
 title:            Rui Shu
-description:      A jekyll theme. Because I scribble.
+description:      An interesting site
 url:              #
 signoff:          #
 disqus_shortname: ruishu-io
@@ -17,3 +17,6 @@ links:
 highlighter:      rouge
 permalink:        pretty
 markdown:         kramdown
+redcarpet:
+  extensions:
+    - smart

@@ -1,5 +1,5 @@
 h1, h2, h3, h4, h5, strong, b {
-  font-weight: 800; }
+  font-weight: 600; }
 
 html, body {
   height: 100%; }
@@ -80,7 +80,7 @@ header {
 
 footer {
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;
   line-height: 2em;
   margin: auto;
   padding-bottom: 30px;
@@ -94,7 +94,7 @@ footer {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;
   background: #fff;
   margin: 40px auto 20px;
   border-radius: 7px;
@@ -357,6 +357,6 @@ img {
   left: 50%;
   font-size: 60px; }
 .paging .left {
-  margin-left: -440px; }
+  margin-left: -340px; }
 .paging .right {
-  margin-left: 420px; }
+  margin-left: 320px; }
