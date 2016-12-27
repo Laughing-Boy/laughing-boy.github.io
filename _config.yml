@@ -12,7 +12,7 @@ links:
   - name:         Blog
     url:          /
   - name:         GitHub
-    url:          http://github.com/RuiShu
+    url:          https://github.com/RuiShu
     external:     true
 highlighter:      rouge
 permalink:        pretty
