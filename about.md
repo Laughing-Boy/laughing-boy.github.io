@@ -8,8 +8,8 @@ layout: page
 
 ---
 
-I am a second-year Master's student in Biomedical Informatics at Stanford University. I received my Bachelor's in Biophysical Chemistry from Dartmouth College. 
+I completed my Bachelor's in Electrical Engineering from IIT Mandi. I am GSOC fellow 2K17, working on image recognistion and learning techiniques. 
+I have a strong research interest in deep learning. I read many research papers and blog about them in this site.
+I am big Asoiaf fan and do lots of reading. I am fanboy of Death Note and Attack on Titans.
 
-I have a strong interest in variational inference, generative modeling, and deep learning. I really like variational methods and am particularly interested in using information-theoretic approaches to improve upon existing deep generative models, and in its application to semi-supervised learning.
-
-If you are interested in knowing more about what I've worked on, please see my [CV](/rui-shu-curriculum.pdf).
+If you are interested in knowing more about what I've worked on, please see my [CV]().
