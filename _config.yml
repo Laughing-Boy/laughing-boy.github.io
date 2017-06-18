@@ -1,5 +1,5 @@
 title:            Jyothir Aditya
-description:      An interesting site
+description:      An Deep Learning site
 url:              https://jyoth1raditya.github.io/web/
 signoff:          #
 disqus_shortname: ruishu-io
@@ -12,7 +12,7 @@ links:
   - name:         Blog
     url:          /
   - name:         GitHub
-    url:          https://github.com/RuiShu
+    url:          https://github.com/jyoth1raditya
     external:     true
 highlighter:      rouge
 permalink:        pretty
