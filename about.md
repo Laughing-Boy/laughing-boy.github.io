@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Everything is gonna be alright
+visible : 0
 ---
 
 <header>
