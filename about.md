@@ -3,7 +3,7 @@ layout: page
 ---
 
 <header>
-<a id="go-back-home" href="{{ site.url }}"><img src="{{ site.url }}/images/inner_rui3.png" alt="Inner Rui" height="100"></a>
+<a id="go-back-home" href="{{ site.url }}"><img src="{{ site.url }}/images/inner_rui1.jpeg" alt="Inner Rui" height="100"></a>
 </header>
 
 ---
