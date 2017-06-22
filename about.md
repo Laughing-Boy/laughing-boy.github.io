@@ -10,7 +10,7 @@ visible : 0
 
 ---
 
-I completed my Bachelor's in Electrical Engineering from IIT Mandi. I am GSOC fellow 2K17, working on image recognistion and learning techiniques. 
+I completed my Bachelor's in Electrical Engineering from IIT Mandi. I am a Python enthusiast .I am GSOC fellow 2K17, working on image recognistion and learning techiniques. 
 I have a strong research interest in deep learning. I read many research papers and blog about them in this site.
 I am big Asoiaf fan and do lots of reading. I am fanboy of Death Note and Attack on Titans.
 
