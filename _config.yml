@@ -8,9 +8,9 @@ google_analytics: # set tracking, remove from /javascripts/basic.js if unwanted.
 comments: true
 links:
   - name:         About
-    url:          /
+    url:          /about
   - name:         Blog
-    url:          /blog
+    url:          /
   - name:         GitHub
     url:          https://github.com/jyoth1raditya
     external:     true
