@@ -5,7 +5,7 @@ visible : 0
 ---
 
 <header>
-<a id="go-back-home" href="{{ site.url }}"><img src="{{ site.url }}/images/inner_rui3.png" alt="Inner Rui" height="200" ></a>
+<a id="go-back-home" href="{{ site.url }}"><img src="/images/inner_rui3.png" alt="Inner Rui" height="200" ></a>
 </header>
 
 ---
